@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef, ViewChild  } from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -24,7 +25,7 @@ export class AppComponent {
   dataStart: string | undefined;
   dataEnd: string | undefined;
 
-  constructor(private agenda: AgendaService, private changeDetectorRefs: ChangeDetectorRef) { }
+  constructor(private agenda: AgendaService, public dialog: MatDialog) { }
   nome: string = "João Sebastião";
   monthFilters: Array<String> = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   selectedMounth = this.monthFilters[this.actualDate.getMonth()];
@@ -139,4 +140,21 @@ export class AppComponent {
 
     return '-';
   }
+
+  openDialog() {
+    this.dialog.open(DialogContentAddMarcacao, {
+      data: {
+        name: 'Sebastião'
+      },
+      height: '400px',
+      width: '350px'
+    });
+  }
 }
+
+
+@Component({
+  selector: 'dialog-content-add-marcacao',
+  templateUrl: 'dialog-content-add-marcacao.html',
+})
+export class DialogContentAddMarcacao {}
