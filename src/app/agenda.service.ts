@@ -12,7 +12,6 @@ export class AgendaService {
 
   getConfig(callback:any) {
     this.http.get<Array<Marcacao>>('http://localhost:8080/marcacoes').subscribe(data => {
-      console.log(data);
       callback(data);
     })
   }

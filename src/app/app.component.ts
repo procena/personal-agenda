@@ -1,9 +1,7 @@
-import { Component, ChangeDetectorRef, ViewChild  } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatDatepicker } from '@angular/material/datepicker';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+  import { Component, ViewChild, Inject } from '@angular/core';
+import { FormControl, FormsModule } from '@angular/forms';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
 import { AgendaService } from './agenda.service';
 import { Marcacao } from './marcacao.model';
 
@@ -36,13 +34,13 @@ export class AppComponent {
   dataSource: any = undefined;
   //dataSource = new MatTableDataSource<any>();
   ngOnInit(): void {
-    console.log(this.selectedMounth);
-    var filterDate = this.getStart_EndDateOfMonth();
-    this.dataStart = filterDate[0];
-    this.dataEnd = filterDate[1];
+
+    /*var filterDate = this.getStart_EndDateOfMonth();
+    console.log(filterDate);*/
+    this.dataStart = this.getStart_EndDateOfMonth()[0];
+    this.dataEnd = this.getStart_EndDateOfMonth()[1];
     this.dataSource = this.generateCalendar();
     this.agenda.getConfig((data: Array<Marcacao>) => {
-      console.log(data[0].data);
       this.marcacoes = data;
     });
 
@@ -52,18 +50,19 @@ export class AppComponent {
     var filterDate = this.getStart_EndDateOfMonth();
     this.dataStart = filterDate[0];
     this.dataEnd = filterDate[1];
+    console.log([this.dataStart, this.dataEnd]);
     this.dataSource = this.generateCalendar();
     this.table.renderRows();
   }
 
   getStart_EndDateOfMonth(): Array<string> {
     var now = new Date();
-    var startDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth) + 1, 1);
-    var endDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth) + 2, 0);
+    var startDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth));
+    var endDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth)+1, 0);
+    console.log([`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${startDate.getDate()}`,`${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${endDate.getDate()}`]);
     console.log(startDate);
-    console.log(startDate.toISOString().slice(0,10));
-
-    return [`${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`, `${endDate.getFullYear()}-${endDate.getMonth()+1}-${endDate.getDate()}`];
+    console.log(endDate);
+    return [`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${startDate.getDate()}`,`${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${endDate.getDate()}`];
   }
 
   isDate(dateArg: any): boolean {
@@ -76,11 +75,11 @@ export class AppComponent {
   }
 
   generateListDate(startDt: any, endDt: any): Array<any> {
+
     var error = ((this.isDate(endDt)) && (this.isDate(startDt)) && (this.isValidRange(startDt, endDt))) ? false : true;
     var between: Array<Array<any>> = [];
     if (error) console.log(`error occured!!!... Please Enter Valid Dates ${startDt} <=> ${endDt}`);
     else {
-      console.log(`${startDt} <=> ${endDt}`);
 
       var currentDate = new Date(startDt),
         end = new Date(endDt);
@@ -111,6 +110,7 @@ export class AppComponent {
 
   generateCalendar(): Array<Object> {
     var listDates = this.generateListDate(this.dataStart, this.dataEnd);
+
     var calendar: Array<Object> = [];
 
     listDates.forEach((element) => {
@@ -126,7 +126,6 @@ export class AppComponent {
       calendar.push(obj);
     })
 
-    console.log(calendar);
     return calendar;
   }
 
@@ -144,7 +143,10 @@ export class AppComponent {
   openDialog() {
     this.dialog.open(DialogContentAddMarcacao, {
       data: {
-        name: 'Sebastião'
+        evento: null,
+        data: null,
+        hora: null,
+        estado: null
       },
       height: '400px',
       width: '350px'
@@ -157,4 +159,7 @@ export class AppComponent {
   selector: 'dialog-content-add-marcacao',
   templateUrl: 'dialog-content-add-marcacao.html',
 })
-export class DialogContentAddMarcacao {}
+export class DialogContentAddMarcacao {
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Marcacao) {}
+}
