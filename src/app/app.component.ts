@@ -16,13 +16,12 @@ export interface DialogData {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'personal-agenda';
-  myform: FormGroup | undefined;
   @ViewChild(MatTable)
   table!: MatTable<any>;
   actualDate = new Date();
   panelOpenState = false;
-  data!: Date;
+  showContentEvent = false;
+
   selectedValue: string | undefined;
   selectedCar: string | undefined;
   dataStart: string | undefined;
@@ -35,22 +34,25 @@ export class AppComponent {
   monthFilters: Array<String> = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   selectedMounth = this.monthFilters[this.actualDate.getMonth()];
 
-
   displayedColumns: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
   marcacoes!: Array<Marcacao>;
   dataSource: any = undefined;
-  //dataSource = new MatTableDataSource<any>();
   ngOnInit(): void {
 
-    /*var filterDate = this.getStart_EndDateOfMonth();
-    console.log(filterDate);*/
     this.dataStart = this.getStart_EndDateOfMonth()[0];
     this.dataEnd = this.getStart_EndDateOfMonth()[1];
     this.dataSource = this.generateCalendar();
     this.atualizarMarcacoes();
     this.hours = this.generateHoursOptions();
-    console.log(this.hours);
 
+  }
+
+  obterEvento(data: string) {
+    if (data !== '-') {
+      var now = new Date();
+      var stringData = `${now.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${data}`;
+      this.showEventFromData(stringData);
+    }
 
   }
 
@@ -58,6 +60,25 @@ export class AppComponent {
     this.agenda.listarMarcacoesByMonth(this.monthFilters.indexOf(this.selectedMounth) + 1, (data: Array<Marcacao>) => {
       this.marcacoes = data;
     })
+  }
+
+  countNumberEvents(data: string): Number {
+    if (data !== '-') {
+      var now = new Date();
+      var countEvent = 0;
+      var stringData = `${now.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${data}`;
+      console.log(this.marcacoes);
+      this.marcacoes.forEach((item) => {
+        if (stringData === item.data) {
+          countEvent++;
+        }
+      });
+
+      return countEvent;
+    }
+
+    return 0;
+
   }
 
   selectMonth() {
@@ -137,6 +158,7 @@ export class AppComponent {
     }
     return listHours;
   }
+
   addMarcacao() {
     console.log(this.novaMarcacao);
     this.novaMarcacao.estado = 'novo';
@@ -181,5 +203,11 @@ export class AppComponent {
 
   openDialog() {
 
+  }
+
+  showEventFromData(data: string) {
+    this.showContentEvent = true;
+    this.panelOpenState = true;
+    alert(data);
   }
 }

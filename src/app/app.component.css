@@ -1,3 +1,20 @@
+::-webkit-scrollbar{
+  width: 13px;
+  height: 13px;
+  }
+  ::-webkit-scrollbar-thumb{
+  background: #ED13ED;
+  border-radius: 22px;
+  }
+  ::-webkit-scrollbar-thumb:hover{
+  background: #700E70;
+  }
+  ::-webkit-scrollbar-track{
+  background: #F0F0F0;
+  border-radius: 0px;
+  box-shadow: inset 0px 0px 0px 0px #F0F0F0;
+  }
+
 mat-card-header {
   border-bottom: 1px solid gray;
   box-shadow: 0 4px 2px -2px gray;
@@ -9,15 +26,46 @@ mat-card-header {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  filter: drop-shadow(2px 4px 6px #121212);
 }
+.calendar table {
+  width: 100%;
+}
+
+ .calendar table td{
+  width: 30px!important;
+  box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+-webkit-box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+-moz-box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+text-align: center;
+padding: 10px;
+border-radius: 45px 45px 45px 45px;
+-webkit-border-radius: 45px 45px 45px 45px;
+-moz-border-radius: 45px 45px 45px 45px;
+border: 10px groove #dcd5d4;
+}
+
+.calendar table th {
+  width: 30px!important;
+  box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+-webkit-box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+-moz-box-shadow: -16px 45px 35px -17px rgba(0,0,0,0.75);
+text-align: center;
+padding: 10px;
+border-radius: 45px 45px 45px 45px;
+-webkit-border-radius: 45px 45px 45px 45px;
+-moz-border-radius: 45px 45px 45px 45px;
+border: 10px groove blueviolet;
+}
+
 
 #toolbar {
 }
 
 .list-task {
   box-shadow: 0 4px 3px -2px rgb(67, 41, 109);
-  min-height: 300px;
-  max-height: 350px;
+  min-height: 200px;
+  max-height: 250px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -28,15 +76,8 @@ mat-card-header {
   max-height: 90vh;
 }
 
-table {
-  width: 100%;
-}
 
-.example-spacer {
-  flex: 1 1 auto;
-}
-
-.table-add-event{
+.table-add-event {
   width: 45%;
 }
 
