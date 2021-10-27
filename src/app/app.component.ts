@@ -1,10 +1,14 @@
-  import { Component, ViewChild, Inject } from '@angular/core';
-import { FormControl, FormsModule } from '@angular/forms';
-import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Component, ViewChild, Inject } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, NgForm } from '@angular/forms';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { AgendaService } from './agenda.service';
 import { Marcacao } from './marcacao.model';
 
+export interface DialogData {
+  animal: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -13,6 +17,7 @@ import { Marcacao } from './marcacao.model';
 })
 export class AppComponent {
   title = 'personal-agenda';
+  myform: FormGroup | undefined;
   @ViewChild(MatTable)
   table!: MatTable<any>;
   actualDate = new Date();
@@ -22,6 +27,8 @@ export class AppComponent {
   selectedCar: string | undefined;
   dataStart: string | undefined;
   dataEnd: string | undefined;
+  hours: Array<string> = this.generateHoursOptions();
+  novaMarcacao = new Marcacao();
 
   constructor(private agenda: AgendaService, public dialog: MatDialog) { }
   nome: string = "João Sebastião";
@@ -40,10 +47,17 @@ export class AppComponent {
     this.dataStart = this.getStart_EndDateOfMonth()[0];
     this.dataEnd = this.getStart_EndDateOfMonth()[1];
     this.dataSource = this.generateCalendar();
-    this.agenda.getConfig((data: Array<Marcacao>) => {
-      this.marcacoes = data;
-    });
+    this.atualizarMarcacoes();
+    this.hours = this.generateHoursOptions();
+    console.log(this.hours);
 
+
+  }
+
+  atualizarMarcacoes() {
+    this.agenda.listarMarcacoesByMonth(this.monthFilters.indexOf(this.selectedMounth) + 1, (data: Array<Marcacao>) => {
+      this.marcacoes = data;
+    })
   }
 
   selectMonth() {
@@ -53,16 +67,17 @@ export class AppComponent {
     console.log([this.dataStart, this.dataEnd]);
     this.dataSource = this.generateCalendar();
     this.table.renderRows();
+    this.atualizarMarcacoes();
   }
 
   getStart_EndDateOfMonth(): Array<string> {
     var now = new Date();
     var startDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth));
-    var endDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth)+1, 0);
-    console.log([`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${startDate.getDate()}`,`${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${endDate.getDate()}`]);
+    var endDate = new Date(now.getFullYear(), this.monthFilters.indexOf(this.selectedMounth) + 1, 0);
+    console.log([`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${startDate.getDate()}`, `${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${endDate.getDate()}`]);
     console.log(startDate);
     console.log(endDate);
-    return [`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${startDate.getDate()}`,`${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth)+1}-${endDate.getDate()}`];
+    return [`${startDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${startDate.getDate()}`, `${endDate.getFullYear()}-${this.monthFilters.indexOf(this.selectedMounth) + 1}-${endDate.getDate()}`];
   }
 
   isDate(dateArg: any): boolean {
@@ -108,6 +123,30 @@ export class AppComponent {
     return between;
   }
 
+  generateHoursOptions(): Array<string> {
+    var start = 7;
+    var end = 19;
+    var listHours: Array<string> = new Array();
+    for (let hour = start; end >= hour; hour++) {
+      if (hour < 10) {
+        listHours.push(`0${hour}:00`);
+      }
+      else {
+        listHours.push(`${hour}:00`);
+      }
+    }
+    return listHours;
+  }
+  addMarcacao() {
+    console.log(this.novaMarcacao);
+    this.novaMarcacao.estado = 'novo';
+    this.agenda.marcarEvento(this.novaMarcacao, (data: Marcacao) => {
+      console.log(data);
+    })
+    var resetForm = <HTMLFormElement>document.getElementById('addEvento');
+    resetForm.reset();
+  }
+
   generateCalendar(): Array<Object> {
     var listDates = this.generateListDate(this.dataStart, this.dataEnd);
 
@@ -141,25 +180,6 @@ export class AppComponent {
   }
 
   openDialog() {
-    this.dialog.open(DialogContentAddMarcacao, {
-      data: {
-        evento: null,
-        data: null,
-        hora: null,
-        estado: null
-      },
-      height: '400px',
-      width: '350px'
-    });
+
   }
-}
-
-
-@Component({
-  selector: 'dialog-content-add-marcacao',
-  templateUrl: 'dialog-content-add-marcacao.html',
-})
-export class DialogContentAddMarcacao {
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Marcacao) {}
 }
