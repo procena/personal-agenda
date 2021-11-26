@@ -49,12 +49,32 @@ import { MatTableModule } from '@angular/material/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { LoginComponent } from './login/login.component';
+import { AgendaComponent } from './agenda/agenda.component';
+import { AuthGuardService } from './auth/auth-guard.service';
+import { RoleGuardService } from './auth/role-guard.service';
+import { AuthService } from './auth/auth.service';
+import { JwtModule, JwtModuleOptions } from '@auth0/angular-jwt';
+import { CalendarioComponent } from './calendario/calendario.component';
+import { MenuComponent } from './menu/menu.component';
+const JWT_Module_Options: JwtModuleOptions = {
+  config: {
+    tokenGetter: () => {
+      //return localStorage.getItem("token");
+      return null;
+    }
+  }
+};
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    AgendaComponent,
+    CalendarioComponent,
+    MenuComponent
   ],
   imports: [
+    JwtModule.forRoot(JWT_Module_Options),
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,
@@ -133,7 +153,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatSortModule,
     MatTableModule
   ],
-  providers: [ {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}],
+  providers: [{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } }, AuthGuardService, RoleGuardService, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

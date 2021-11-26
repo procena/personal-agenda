@@ -1,0 +1,40 @@
+#content-menu {
+  height: 100%;
+}
+mat-grid-list {
+  padding: 15px;
+  margin: 20px;
+}
+a {
+    text-decoration: none;
+    color: darkslateblue;
+    font-weight: bold;
+}
+mat-grid-tile div {
+  background-color: whitesmoke;
+  border: 1px unset whitesmoke;
+  box-shadow: 5px 10px 0 0 #CBC3E3;
+  width: 90%;
+  height: 90%;
+  text-align: center;
+  padding-top: 120px;
+  font-size: 20px;
+ 
+
+}
+
+div .relatorio-menu{
+    background-image: url("../../assets/img/report.png");
+    background-position: right 65%; /*Positioning*/
+    background-repeat: no-repeat; /*Prevent showing multiple background images*/
+}
+
+div .agenda-menu {
+    background-image: url("../../assets/img/calendar.png");
+    background-position: right 75%; /*Positioning*/
+    background-repeat: no-repeat; /*Prevent showing multiple background images*/
+}
+
+mat-grid-tile:hover {
+  transform: scale(1.1);
+}

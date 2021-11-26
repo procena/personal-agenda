@@ -1,0 +1,26 @@
+<mat-drawer-container id="content-menu">
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <p>Auto-resizing sidenav</p>
+    <p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+  </div>
+
+  <div class="container">
+    <mat-grid-list cols="3" rowHeight="3:1">
+      <mat-grid-tile *ngFor="let menu of listaMenu">
+        <div class="{{menu.moduloAcess.idmodulo}}-menu">
+            <a href="/{{menu.moduloAcess.path}}">{{menu.moduloAcess.descricao}}</a>
+        </div>
+        
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</mat-drawer-container>

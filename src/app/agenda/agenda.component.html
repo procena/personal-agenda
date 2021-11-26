@@ -1,0 +1,250 @@
+<mat-drawer-container style="height: 95vh">
+    <mat-drawer mode="side" opened id="toolbar">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>O que temos marcado para hoje?</mat-card-title>
+          <mat-card-subtitle>
+            <img
+              class="welcome-img"
+              src="https://acegif.com/wp-content/gif/thinking-emoji-34.gif"
+              alt=""
+            />
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-divider [inset]="true"></mat-divider>
+        <mat-card-content class="list-task">
+          <mat-list>
+            <mat-list-item *ngFor="let item of marcacoes">
+              <div mat-line>{{ item.evento }}</div>
+              <div mat-line>{{ item.data }},{{ item.hora }}</div>
+              <mat-icon (click)="removerMarcacao(item.id)"
+                >restore_from_trash</mat-icon
+              >
+              <mat-icon (click)="editarMarcacao(item)">edit</mat-icon>
+              <mat-icon (click)="showEventFromData(item.data)"
+                >open_in_new</mat-icon
+              >
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-drawer>
+    <mat-drawer-content>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Bem-vindo, {{ nome }}</mat-card-title>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>dialpad</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <a mat-menu-item *ngFor="let menuItem of menus" href="{{menuItem.path}}">
+              <span>{{menuItem.descricao}}</span>
+            </a>
+            
+          </mat-menu>
+        </mat-card-header>
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title> Meu Calendario </mat-panel-title>
+              <mat-panel-description>
+                Resumo mensal dos eventos marcados
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-card-content class="calendar">
+              <mat-form-field appearance="fill">
+                <mat-label>Mês:</mat-label>
+                <mat-select
+                  [(value)]="selectedMounth"
+                  (selectionChange)="selectMonth()"
+                >
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let mes of monthFilters" [value]="mes">
+                    {{ mes }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <table
+                mat-table
+                [dataSource]="dataSource"
+                class="mat-elevation-z8"
+                id="calendar"
+              >
+                <ng-container matColumnDef="Dom">
+                  <th mat-header-cell *matHeaderCellDef>Dom</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Dom) }}"
+                    (click)="obterEvento(element.Dom)"
+                  >
+                    {{ element.Dom }}
+                  </td>
+                </ng-container>
+  
+                <ng-container matColumnDef="Seg">
+                  <th mat-header-cell *matHeaderCellDef>Seg</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Seg) }}"
+                    (click)="obterEvento(element.Seg)"
+                  >
+                    {{ element.Seg }}
+                  </td>
+                </ng-container>
+  
+                <ng-container matColumnDef="Ter">
+                  <th mat-header-cell *matHeaderCellDef>Ter</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Ter) }}"
+                    (click)="obterEvento(element.Ter)"
+                  >
+                    {{ element.Ter }}
+                  </td>
+                </ng-container>
+  
+                <ng-container matColumnDef="Qua">
+                  <th mat-header-cell *matHeaderCellDef>Qua</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Qua) }}"
+                    (click)="obterEvento(element.Qua)"
+                  >
+                    {{ element.Qua }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="Qui">
+                  <th mat-header-cell *matHeaderCellDef>Qui</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Qui) }}"
+                    (click)="obterEvento(element.Qui)"
+                  >
+                    {{ element.Qui }}
+                  </td>
+                </ng-container>
+  
+                <ng-container matColumnDef="Sex">
+                  <th mat-header-cell *matHeaderCellDef>Sex</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Sex) }}"
+                    (click)="obterEvento(element.Sex)"
+                  >
+                    {{ element.Sex }}
+                  </td>
+                </ng-container>
+  
+                <ng-container matColumnDef="Sab">
+                  <th mat-header-cell *matHeaderCellDef>Sab</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    matBadge="{{ countNumberEvents(element.Sab) }}"
+                    (click)="obterEvento(element.Sab)"
+                  >
+                    {{ element.Sab }}
+                  </td>
+                </ng-container>
+  
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+            </mat-card-content>
+          </mat-expansion-panel>
+          <mat-expansion-panel
+            (opened)="panelOpenState = true"
+            (closed)="panelOpenState = false"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>Nova Marcação</mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-card-content>
+              <mat-grid-list cols="2" rowHeight="1:1">
+                <mat-grid-tile>
+                  <form id="addEvento" (ngSubmit)="addMarcacao()">
+                    <table class="table-add-event" cellspacing="0">
+                      <tr>
+                        <td>
+                          <mat-form-field
+                            class="example-full-width"
+                            appearance="fill"
+                          >
+                            <mat-label>Data</mat-label>
+                            <input
+                              type="date"
+                              matInput
+                              [(ngModel)]="novaMarcacao.data"
+                              name="data"
+                            />
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <mat-form-field
+                            class="example-full-width"
+                            appearance="fill"
+                          >
+                            <mat-label>Hora</mat-label>
+                            <mat-select
+                              [(ngModel)]="novaMarcacao.hora"
+                              name="hora"
+                            >
+                              <mat-option>...</mat-option>
+                              <mat-option
+                                *ngFor="let hour of hours"
+                                [value]="hour"
+                              >
+                                {{ hour }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th colspan="2">
+                          <mat-form-field
+                            class="example-full-width"
+                            appearance="fill"
+                          >
+                            <mat-label>Descrição do Evento</mat-label>
+                            <textarea class="evento-descricao"
+                              matInput
+                              [(ngModel)]="novaMarcacao.evento"
+                              name="evento"
+                            ></textarea>
+                          </mat-form-field>
+                        </th>
+                      </tr>
+                      <tr>
+                        <th colspan="2">
+                          <button type="submit" mat-raised-button color="primary">
+                            Marcar
+                          </button>
+                        </th>
+                      </tr>
+                    </table>
+                  </form>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <div *ngIf="showContentEvent; then content; else other_content">
+                    here is ignored
+                  </div>
+                  <ng-template #content>content here...</ng-template>
+                  <ng-template #other_content>other content here...</ng-template>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-card>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  
+  <router-outlet></router-outlet>
+  
